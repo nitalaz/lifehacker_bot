@@ -2,7 +2,7 @@ import streamlit as st
 
 st.set_page_config(page_title="My Chatbot", page_icon="🤖")
 
-st.title("🤖 My Streamlit Chatbot")
+st.title("🤖 life hacker chatbot")
 
 # Initialize chat history
 if "messages" not in st.session_state:
