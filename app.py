@@ -8,6 +8,19 @@ st.title("🤖 My Streamlit Chatbot")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+# Function to generate bot response (NO API)
+def get_bot_response(user_input):
+    user_input = user_input.lower()
+
+    if "hello" in user_input:
+        return "Hi there! 👋"
+    elif "how are you" in user_input:
+        return "I'm just code, but I'm doing great! 😄"
+    elif "bye" in user_input:
+        return "Goodbye! Have a great day! 👋"
+    else:
+        return "That's interesting! Tell me more."
+
 # Display previous messages
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
@@ -18,16 +31,20 @@ prompt = st.chat_input("Type your message here...")
 
 if prompt:
     # Save user message
-    st.session_state.messages.append({"role": "user", "content": prompt})
+    st.session_state.messages.append(
+        {"role": "user", "content": prompt}
+    )
 
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Simple bot response (for now)
-    response = f"You said: {prompt}"
+    # Generate response (no API)
+    response = get_bot_response(prompt)
 
-    # Save bot message
-    st.session_state.messages.append({"role": "assistant", "content": response})
+    # Save assistant message
+    st.session_state.messages.append(
+        {"role": "assistant", "content": response}
+    )
 
     with st.chat_message("assistant"):
         st.markdown(response)
