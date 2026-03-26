@@ -1,102 +1,125 @@
 import streamlit as st
 import random
-import re
 
-st.set_page_config(page_title="Smart Chatbot", page_icon="🤖")
+st.set_page_config(page_title="Life Hack Bot", page_icon="💡")
 
-st.title("🤖 Smart Life Hacker Chatbot")
+st.title("💡 Life Hack Chatbot")
 
-# Memory
+# Chat memory
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-if "memory" not in st.session_state:
-    st.session_state.memory = {}
+# ===== LIFE HACK DATABASE =====
+life_hacks = {
+    "study": [
+        "Use the Pomodoro technique: 25 min study, 5 min break 📚",
+        "Teach what you learn — it helps you remember better.",
+        "Study in a clean, quiet space."
+    ],
+    "sleep": [
+        "Avoid screens 30 minutes before bed 😴",
+        "Sleep at the same time every night.",
+        "Keep your room cool and dark."
+    ],
+    "focus": [
+        "Turn off notifications 🔕",
+        "Work in short bursts.",
+        "Use a timer to stay on track."
+    ],
+    "clean": [
+        "Clean for 10 minutes daily to avoid mess.",
+        "Start with the smallest task first.",
+        "Use a checklist to stay organized."
+    ],
+    "phone": [
+        "Put your phone in another room while working 📵",
+        "Use grayscale mode to reduce screen addiction.",
+        "Delete apps you don’t need."
+    ],
+    "motivation": [
+        "Start small — even 5 minutes helps 💪",
+        "Don’t wait to feel motivated — just begin.",
+        "Set tiny goals and build up."
+    ],
+    "food": [
+        "Drink water before meals to avoid overeating 💧",
+        "Prepare meals ahead of time.",
+        "Eat slowly to enjoy your food."
+    ],
+    "health": [
+        "Walk at least 10 minutes a day 🚶",
+        "Stretch regularly.",
+        "Drink more water."
+    ],
+    "time": [
+        "Make a to-do list every morning 📝",
+        "Do the hardest task first.",
+        "Limit distractions."
+    ],
+    "memory": [
+        "Repeat information out loud 🧠",
+        "Write things down.",
+        "Use associations to remember."
+    ]
+}
 
-# Smart response function
+# Add more hacks to reach ~100
+extra_hacks = [
+    "Use cold water to wake up faster 🚿",
+    "Set alarms for important tasks ⏰",
+    "Break big tasks into smaller steps",
+    "Keep your workspace clean",
+    "Reward yourself after finishing tasks",
+    "Listen to music to stay focused 🎧",
+    "Use sticky notes for reminders",
+    "Drink water when you feel tired",
+    "Take short breaks to stay productive",
+    "Plan your day the night before",
+    "Use keyboard shortcuts to save time",
+    "Keep things in the same place",
+    "Wake up at the same time daily",
+    "Smile — it improves your mood 😊",
+    "Exercise in the morning for energy",
+    "Avoid multitasking",
+    "Write goals down",
+    "Track your habits",
+    "Use a calendar",
+    "Limit social media time",
+]
+
+# ===== RESPONSE FUNCTION =====
 def get_bot_response(user_input):
     text = user_input.lower()
 
-    # ========= BASIC KNOWLEDGE =========
+    # Search for matching category
+    for key in life_hacks:
+        if key in text:
+            return random.choice(life_hacks[key])
 
-    if "brush my teeth" in text:
-        return "Brush your teeth twice a day for 2 minutes. Use toothpaste, move in circles, and don't forget your tongue! 🪥"
+    # Specific questions
+    if "how to brush" in text:
+        return "Brush for 2 minutes, use toothpaste, and clean all sides of your teeth 🪥"
 
-    if "1 liter" in text or "1 litre" in text:
-        return "1 liter = 1000 milliliters (ml)."
-
-    if "how much" in text and "liter" in text:
-        return "1 liter equals 1000 milliliters (ml)."
-
-    if "what is" in text:
-        return "It depends — can you be more specific? 🤔"
-
-    # ========= MATH =========
-
-    try:
-        # simple math detection
-        if any(op in text for op in ["+", "-", "*", "/"]):
-            result = eval(text)
-            return f"The answer is {result}"
-    except:
-        pass
-
-    # ========= MEMORY =========
-
-    if "my name is" in text:
-        name = text.split("my name is")[-1].strip()
-        st.session_state.memory["name"] = name
-        return f"Nice to meet you, {name}! 😊"
-
-    if "what is my name" in text:
-        if "name" in st.session_state.memory:
-            return f"Your name is {st.session_state.memory['name']}!"
-        else:
-            return "I don't know your name yet. Tell me!"
-
-    # ========= STUDY / LIFE =========
-
-    if any(word in text for word in ["study", "exam", "homework"]):
+    if "how to wake up" in text:
         return random.choice([
-            "Try studying in 25-minute sessions (Pomodoro method) 📚",
-            "Practice active recall — test yourself!",
-            "Remove distractions and focus on one task."
+            "Put your alarm far away so you have to get up ⏰",
+            "Drink water right after waking up 💧",
+            "Get sunlight early 🌞"
         ])
 
-    if "sleep" in text:
-        return "Try to get 7–9 hours of sleep and avoid screens before bed 😴"
+    if "how to study better" in text:
+        return random.choice(life_hacks["study"])
 
-    if any(word in text for word in ["lazy", "motivation"]):
-        return "Start small. Even 5 minutes helps 💪"
+    # Random hack fallback
+    return random.choice(extra_hacks)
 
-    # ========= GREETING =========
-
-    if any(word in text for word in ["hi", "hello", "hey"]):
-        return random.choice([
-            "Hey! 👋",
-            "Hello! 😊",
-            "Hi there!"
-        ])
-
-    if "bye" in text:
-        return "Goodbye! 👋"
-
-    # ========= DEFAULT =========
-
-    return random.choice([
-        "I don’t fully understand yet, but I’m learning! 🤔",
-        "Can you explain that differently?",
-        "That’s new to me — tell me more!",
-        "I’m not sure, but I’m getting smarter!"
-    ])
-
-# Show chat
+# ===== DISPLAY CHAT =====
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# Input
-prompt = st.chat_input("Type your message here...")
+# ===== INPUT =====
+prompt = st.chat_input("Ask for a life hack...")
 
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
