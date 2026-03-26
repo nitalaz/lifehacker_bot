@@ -1,27 +1,26 @@
 import streamlit as st
+from openai import OpenAI
 
-st.set_page_config(page_title="My Chatbot", page_icon="🤖")
+# 🔑 Put your OpenAI API key here
+client = OpenAI(api_key="YOUR_API_KEY_HERE")
 
-st.title("🤖 life hacker chatbot")
+st.set_page_config(page_title="Smart Chatbot", page_icon="🤖")
+
+st.title("🤖 Smart Life Hacker Chatbot")
 
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Function to generate bot response (NO API)
-def get_bot_response(user_input):
-    user_input = user_input.lower()
+# Function to generate AI response
+def get_bot_response():
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=st.session_state.messages
+    )
+    return response.choices[0].message.content
 
-    if "hello" in user_input:
-        return "Hi there! 👋"
-    elif "how are you" in user_input:
-        return "I'm just code, but I'm doing great! 😄"
-    elif "bye" in user_input:
-        return "Goodbye! Have a great day! 👋"
-    else:
-        return "That's interesting! Tell me more."
-
-# Display previous messages
+# Display chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
@@ -38,10 +37,10 @@ if prompt:
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate response (no API)
-    response = get_bot_response(prompt)
+    # Get AI response
+    response = get_bot_response()
 
-    # Save assistant message
+    # Save bot response
     st.session_state.messages.append(
         {"role": "assistant", "content": response}
     )
