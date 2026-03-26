@@ -9,117 +9,171 @@ st.title("💡 Life Hack Chatbot")
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# ===== LIFE HACK DATABASE =====
+# LIFE HACK DATABASE (100+ ideas grouped)
 life_hacks = {
     "study": [
-        "Use the Pomodoro technique: 25 min study, 5 min break 📚",
-        "Teach what you learn — it helps you remember better.",
-        "Study in a clean, quiet space."
+        "Use the Pomodoro technique: 25 min focus + 5 min break.",
+        "Teach what you learn to someone else.",
+        "Study in a quiet, distraction-free place.",
+        "Write notes by hand to remember better.",
+        "Test yourself instead of rereading notes.",
+        "Use flashcards for memorization.",
+        "Study the hardest subject first.",
+        "Take short breaks to stay focused.",
+        "Use music without lyrics to concentrate.",
+        "Review notes before sleeping."
     ],
+
     "sleep": [
-        "Avoid screens 30 minutes before bed 😴",
-        "Sleep at the same time every night.",
-        "Keep your room cool and dark."
+        "Avoid screens 1 hour before bed.",
+        "Go to sleep at the same time every night.",
+        "Keep your room dark and cool.",
+        "Don’t drink caffeine before bed.",
+        "Try relaxing music or white noise.",
+        "Use your bed only for sleep.",
+        "Wake up at the same time daily.",
+        "Get sunlight in the morning.",
+        "Exercise during the day for better sleep.",
+        "Avoid heavy meals before bed."
     ],
-    "focus": [
-        "Turn off notifications 🔕",
-        "Work in short bursts.",
-        "Use a timer to stay on track."
+
+    "productivity": [
+        "Make a to-do list every morning.",
+        "Start with the hardest task first.",
+        "Remove distractions like your phone.",
+        "Break big tasks into small steps.",
+        "Set deadlines for everything.",
+        "Focus on one task at a time.",
+        "Use timers to stay on track.",
+        "Clean your workspace.",
+        "Reward yourself after finishing tasks.",
+        "Plan your day the night before."
     ],
-    "clean": [
-        "Clean for 10 minutes daily to avoid mess.",
-        "Start with the smallest task first.",
-        "Use a checklist to stay organized."
-    ],
-    "phone": [
-        "Put your phone in another room while working 📵",
-        "Use grayscale mode to reduce screen addiction.",
-        "Delete apps you don’t need."
-    ],
-    "motivation": [
-        "Start small — even 5 minutes helps 💪",
-        "Don’t wait to feel motivated — just begin.",
-        "Set tiny goals and build up."
-    ],
-    "food": [
-        "Drink water before meals to avoid overeating 💧",
-        "Prepare meals ahead of time.",
-        "Eat slowly to enjoy your food."
-    ],
+
     "health": [
-        "Walk at least 10 minutes a day 🚶",
-        "Stretch regularly.",
-        "Drink more water."
+        "Drink more water throughout the day.",
+        "Walk at least 30 minutes daily.",
+        "Eat more fruits and vegetables.",
+        "Stretch every morning.",
+        "Don’t skip breakfast.",
+        "Exercise regularly.",
+        "Take deep breaths to reduce stress.",
+        "Limit sugary drinks.",
+        "Wash your hands often.",
+        "Stand up and move every hour."
     ],
-    "time": [
-        "Make a to-do list every morning 📝",
-        "Do the hardest task first.",
-        "Limit distractions."
+
+    "cleaning": [
+        "Clean as you go to avoid mess buildup.",
+        "Set a timer for 10 minutes to clean quickly.",
+        "Do small cleaning tasks daily.",
+        "Keep supplies in one place.",
+        "Make your bed every morning.",
+        "Use baking soda for tough stains.",
+        "Declutter one area at a time.",
+        "Do laundry regularly.",
+        "Wipe surfaces daily.",
+        "Organize before cleaning."
     ],
-    "memory": [
-        "Repeat information out loud 🧠",
-        "Write things down.",
-        "Use associations to remember."
+
+    "money": [
+        "Save a small amount every week.",
+        "Track your spending.",
+        "Avoid impulse buying.",
+        "Set a budget.",
+        "Compare prices before buying.",
+        "Use discounts and coupons.",
+        "Cook at home instead of eating out.",
+        "Set financial goals.",
+        "Avoid unnecessary subscriptions.",
+        "Buy only what you need."
+    ],
+
+    "social": [
+        "Listen more than you talk.",
+        "Make eye contact when speaking.",
+        "Smile to appear friendly.",
+        "Remember people’s names.",
+        "Be kind and respectful.",
+        "Ask questions to show interest.",
+        "Stay positive in conversations.",
+        "Avoid interrupting others.",
+        "Be confident but polite.",
+        "Practice good manners."
+    ],
+
+    "technology": [
+        "Use keyboard shortcuts to save time.",
+        "Organize your files into folders.",
+        "Back up important data.",
+        "Keep your software updated.",
+        "Use strong passwords.",
+        "Limit screen time.",
+        "Turn off unnecessary notifications.",
+        "Use dark mode at night.",
+        "Clean your device storage regularly.",
+        "Learn basic tech skills."
+    ],
+
+    "motivation": [
+        "Start small — just begin.",
+        "Set clear goals.",
+        "Track your progress.",
+        "Celebrate small wins.",
+        "Stay consistent.",
+        "Visualize success.",
+        "Surround yourself with positive people.",
+        "Take breaks when needed.",
+        "Don’t compare yourself to others.",
+        "Keep going even when it’s hard."
+    ],
+
+    "school": [
+        "Pay attention in class.",
+        "Ask questions when confused.",
+        "Review notes daily.",
+        "Stay organized.",
+        "Do homework on time.",
+        "Participate in discussions.",
+        "Use planners for assignments.",
+        "Study a little every day.",
+        "Avoid procrastination.",
+        "Prepare for tests early."
     ]
 }
 
-# Add more hacks to reach ~100
-extra_hacks = [
-    "Use cold water to wake up faster 🚿",
-    "Set alarms for important tasks ⏰",
-    "Break big tasks into smaller steps",
-    "Keep your workspace clean",
-    "Reward yourself after finishing tasks",
-    "Listen to music to stay focused 🎧",
-    "Use sticky notes for reminders",
-    "Drink water when you feel tired",
-    "Take short breaks to stay productive",
-    "Plan your day the night before",
-    "Use keyboard shortcuts to save time",
-    "Keep things in the same place",
-    "Wake up at the same time daily",
-    "Smile — it improves your mood 😊",
-    "Exercise in the morning for energy",
-    "Avoid multitasking",
-    "Write goals down",
-    "Track your habits",
-    "Use a calendar",
-    "Limit social media time",
-]
-
-# ===== RESPONSE FUNCTION =====
+# Response function
 def get_bot_response(user_input):
     text = user_input.lower()
 
-    # Search for matching category
-    for key in life_hacks:
-        if key in text:
-            return random.choice(life_hacks[key])
+    # Find matching category
+    for category in life_hacks:
+        if category in text:
+            return random.choice(life_hacks[category])
 
-    # Specific questions
-    if "how to brush" in text:
-        return "Brush for 2 minutes, use toothpaste, and clean all sides of your teeth 🪥"
+    # Extra smart matching
+    if "tired" in text or "sleepy" in text:
+        return random.choice(life_hacks["sleep"])
 
-    if "how to wake up" in text:
-        return random.choice([
-            "Put your alarm far away so you have to get up ⏰",
-            "Drink water right after waking up 💧",
-            "Get sunlight early 🌞"
-        ])
+    if "focus" in text:
+        return random.choice(life_hacks["productivity"])
 
-    if "how to study better" in text:
+    if "lazy" in text:
+        return random.choice(life_hacks["motivation"])
+
+    if "study" in text or "exam" in text:
         return random.choice(life_hacks["study"])
 
-    # Random hack fallback
-    return random.choice(extra_hacks)
+    # Fallback
+    return "I can give life hacks about study, sleep, money, health, productivity and more! Try asking about one of those 💡"
 
-# ===== DISPLAY CHAT =====
+# Display chat
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# ===== INPUT =====
-prompt = st.chat_input("Ask for a life hack...")
+# Input
+prompt = st.chat_input("Ask me for a life hack...")
 
 if prompt:
     st.session_state.messages.append({"role": "user", "content": prompt})
@@ -133,4 +187,3 @@ if prompt:
 
     with st.chat_message("assistant"):
         st.markdown(response)
-        
