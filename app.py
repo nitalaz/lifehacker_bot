@@ -1,106 +1,112 @@
 import streamlit as st
 import random
+import re
 
-st.set_page_config(page_title="Life Hacker Chatbot", page_icon="🤖")
+st.set_page_config(page_title="Smart Chatbot", page_icon="🤖")
 
-st.title("🤖 Life Hacker Chatbot")
+st.title("🤖 Smart Life Hacker Chatbot")
 
-# Initialize chat history
+# Memory
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Smarter response function
+if "memory" not in st.session_state:
+    st.session_state.memory = {}
+
+# Smart response function
 def get_bot_response(user_input):
     text = user_input.lower()
 
-    # Greetings
+    # ========= BASIC KNOWLEDGE =========
+
+    if "brush my teeth" in text:
+        return "Brush your teeth twice a day for 2 minutes. Use toothpaste, move in circles, and don't forget your tongue! 🪥"
+
+    if "1 liter" in text or "1 litre" in text:
+        return "1 liter = 1000 milliliters (ml)."
+
+    if "how much" in text and "liter" in text:
+        return "1 liter equals 1000 milliliters (ml)."
+
+    if "what is" in text:
+        return "It depends — can you be more specific? 🤔"
+
+    # ========= MATH =========
+
+    try:
+        # simple math detection
+        if any(op in text for op in ["+", "-", "*", "/"]):
+            result = eval(text)
+            return f"The answer is {result}"
+    except:
+        pass
+
+    # ========= MEMORY =========
+
+    if "my name is" in text:
+        name = text.split("my name is")[-1].strip()
+        st.session_state.memory["name"] = name
+        return f"Nice to meet you, {name}! 😊"
+
+    if "what is my name" in text:
+        if "name" in st.session_state.memory:
+            return f"Your name is {st.session_state.memory['name']}!"
+        else:
+            return "I don't know your name yet. Tell me!"
+
+    # ========= STUDY / LIFE =========
+
+    if any(word in text for word in ["study", "exam", "homework"]):
+        return random.choice([
+            "Try studying in 25-minute sessions (Pomodoro method) 📚",
+            "Practice active recall — test yourself!",
+            "Remove distractions and focus on one task."
+        ])
+
+    if "sleep" in text:
+        return "Try to get 7–9 hours of sleep and avoid screens before bed 😴"
+
+    if any(word in text for word in ["lazy", "motivation"]):
+        return "Start small. Even 5 minutes helps 💪"
+
+    # ========= GREETING =========
+
     if any(word in text for word in ["hi", "hello", "hey"]):
         return random.choice([
-            "Hey! 👋 What can I help you with?",
-            "Hi there! 😊",
-            "Hello! Ask me anything!"
+            "Hey! 👋",
+            "Hello! 😊",
+            "Hi there!"
         ])
 
-    # How are you
-    elif "how are you" in text:
-        return random.choice([
-            "I'm doing great 😄 How about you?",
-            "All good here! Ready to help 💪"
-        ])
+    if "bye" in text:
+        return "Goodbye! 👋"
 
-    # Name
-    elif "your name" in text:
-        return "I'm your life hacker bot 😎"
+    # ========= DEFAULT =========
 
-    # Study tips
-    elif any(word in text for word in ["study", "homework", "exam"]):
-        return random.choice([
-            "Try the Pomodoro technique: 25 min study + 5 min break 📚",
-            "Turn off distractions and focus on one task at a time.",
-            "Practice active recall instead of just rereading notes!"
-        ])
+    return random.choice([
+        "I don’t fully understand yet, but I’m learning! 🤔",
+        "Can you explain that differently?",
+        "That’s new to me — tell me more!",
+        "I’m not sure, but I’m getting smarter!"
+    ])
 
-    # Sleep
-    elif "sleep" in text:
-        return random.choice([
-            "Try to get 7–9 hours of sleep 😴",
-            "Avoid screens before bed for better sleep.",
-            "Keep a consistent sleep schedule!"
-        ])
-
-    # Motivation
-    elif any(word in text for word in ["motivate", "lazy", "tired"]):
-        return random.choice([
-            "Start small — even 5 minutes helps 💪",
-            "Discipline beats motivation 🔥",
-            "Just begin. You’ll feel better once you start."
-        ])
-
-    # Productivity
-    elif any(word in text for word in ["productive", "focus", "time"]):
-        return random.choice([
-            "Make a to-do list and prioritize tasks ✅",
-            "Remove distractions (phone, notifications)",
-            "Work in short focused bursts!"
-        ])
-
-    # Goodbye
-    elif any(word in text for word in ["bye", "goodbye"]):
-        return "Goodbye! 👋 Come back anytime!"
-
-    # Fallback (better than before)
-    else:
-        return random.choice([
-            "Hmm, can you explain that a bit more?",
-            "I’m still learning — tell me more!",
-            "Interesting… what do you mean exactly?",
-            "I’m not sure yet, but I’d love to learn more!"
-        ])
-
-# Display chat history
+# Show chat
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# User input
+# Input
 prompt = st.chat_input("Type your message here...")
 
 if prompt:
-    # Save user message
-    st.session_state.messages.append(
-        {"role": "user", "content": prompt}
-    )
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.chat_message("user"):
         st.markdown(prompt)
 
-    # Generate response
     response = get_bot_response(prompt)
 
-    # Save bot response
-    st.session_state.messages.append(
-        {"role": "assistant", "content": response}
-    )
+    st.session_state.messages.append({"role": "assistant", "content": response})
 
     with st.chat_message("assistant"):
         st.markdown(response)
